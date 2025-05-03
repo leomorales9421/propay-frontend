@@ -35,6 +35,7 @@ export default function LoginPage() {
           toaster.success({
             title: "Inicio de sesión exitoso",
           });
+          window.location.href = "/dashboard"; // Redirigir al dashboard
         }
       } catch (error) {
         toaster.error({

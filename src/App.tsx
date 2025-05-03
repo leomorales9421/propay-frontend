@@ -12,6 +12,7 @@ import { Toaster } from "./components/ui/toaster";
 import { RestaurantComponent } from "./components/RestaurantsComponents/RestaurantComponent";
 import { UsersComponents } from "./components/UsersComponents/UsersComponents";
 import { QualificationsComponents } from "./components/QualificationsComponents/QualificationsComponents";
+import { ProtectedRoute, AuthRedirect } from "./auth/AuthContext";
 
 function App() {
   return (
@@ -20,12 +21,55 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/home" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route index path="/dashboard" element={<DashboardPage />} />
-        <Route path="/restaurants" element={<RestaurantComponent />} />
-        <Route path="/users" element={<UsersComponents />} />
-        <Route path="/qualifications" element={<QualificationsComponents />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route
+          path="/login"
+          element={
+            <AuthRedirect>
+              <LoginPage />
+            </AuthRedirect>
+          }
+        />
+        <Route
+          index
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/restaurants"
+          element={
+            <ProtectedRoute>
+              <RestaurantComponent />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute>
+              <UsersComponents />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/qualifications"
+          element={
+            <ProtectedRoute>
+              <QualificationsComponents />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <AuthRedirect>
+              <RegisterPage />
+            </AuthRedirect>
+          }
+        />
       </Routes>
     </Router>
   );

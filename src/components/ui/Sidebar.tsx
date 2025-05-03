@@ -9,15 +9,23 @@ import {
 } from "@chakra-ui/react";
 import { Tooltip } from "@/components/ui/tooltip";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { MdRestaurant, MdPeople, MdStarRate, MdHome } from "react-icons/md";
+import {
+  MdRestaurant,
+  MdPeople,
+  MdStarRate,
+  MdHome,
+  MdLogout,
+} from "react-icons/md";
 
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/auth/AuthContext";
 import Logo from "../../assets/logoPay.png";
 import { useState } from "react";
 
 export function Sidebar() {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(true);
+  const { logout } = useAuth();
 
   const NavItem = ({ icon, children, path }) => (
     <Link
@@ -137,6 +145,31 @@ export function Sidebar() {
           </Box>
         </Tooltip>
       </VStack>
+      <Box mt="auto" mb="4" px="4" display="flex" justifyContent="center">
+        <Tooltip content="Salir" disabled={isOpen}>
+          <Link
+            onClick={logout}
+            display="flex"
+            alignItems="center"
+            gap="3"
+            w="100%"
+            px="3"
+            py="2"
+            borderRadius="md"
+            fontWeight="medium"
+            fontSize="sm"
+            color="white"
+            _hover={{
+              textDecoration: "none",
+              bg: "red.500",
+            }}
+            transition="background 0.2s ease"
+          >
+            <Icon as={MdLogout} fontSize="20px" />
+            {isOpen && <Text>Salir</Text>}
+          </Link>
+        </Tooltip>
+      </Box>
     </Flex>
   );
 }

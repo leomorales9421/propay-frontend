@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import { Tooltip } from "@/components/ui/tooltip";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { MdRestaurant, MdPeople, MdStarRate } from "react-icons/md";
+import { MdRestaurant, MdPeople, MdStarRate, MdHome } from "react-icons/md";
 
 import { useNavigate } from "react-router-dom";
 import Logo from "../../assets/logoPay.png";
@@ -100,9 +100,16 @@ export function Sidebar() {
 
       {/* Menu Items */}
       <VStack align="start" spacing={1} px="4">
+        <Tooltip content="Início" disabled={isOpen}>
+          <Box w="100%">
+            <NavItem icon={MdHome} path="/dashboard">
+              Inicio
+            </NavItem>
+          </Box>
+        </Tooltip>
         <Tooltip content="Restaurantes" disabled={isOpen}>
           <Box w="100%">
-            <NavItem icon={MdRestaurant} path="/transactions">
+            <NavItem icon={MdRestaurant} path="/restaurants">
               Restaurantes
             </NavItem>
           </Box>
@@ -113,7 +120,7 @@ export function Sidebar() {
           disabled={isOpen}
         >
           <Box w="100%">
-            <NavItem icon={MdPeople} path="/settings">
+            <NavItem icon={MdPeople} path="/users">
               Usuarios
             </NavItem>
           </Box>
@@ -124,7 +131,7 @@ export function Sidebar() {
           disabled={isOpen}
         >
           <Box w="100%">
-            <NavItem icon={MdStarRate} path="/profile">
+            <NavItem icon={MdStarRate} path="/qualifications">
               Puntuaciones
             </NavItem>
           </Box>

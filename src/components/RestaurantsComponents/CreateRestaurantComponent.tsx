@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -7,138 +7,121 @@ import {
   HStack,
   Image,
   Text,
-  Spinner,
+  IconButton,
+  Center,
+  Field,
 } from "@chakra-ui/react";
+import { MdClose } from "react-icons/md";
 import {
-  GoogleMap,
-  useLoadScript,
-  Marker,
-  Autocomplete,
-} from "@react-google-maps/api";
+  validationSchema,
+  initialValues,
+} from "./CreateRestaurantComponentData.data";
+import { useFormik } from "formik";
 
-const containerStyle = {
-  width: "100%",
-  height: "300px",
-};
-
-const centerDefault = {
-  lat: -16.5, // ejemplo de latitud por defecto
-  lng: -68.15, // ejemplo de longitud por defecto
-};
+import { toaster } from "@/components/ui/toaster";
 
 export function CreateRestaurantComponent({ onAddRestaurant }) {
-  const [formData, setFormData] = useState({
-    name: "",
-    address: "",
-    location: "",
-    status: "",
-    logo: null,
-    coordinates: null, // para guardar coordenadas
+  const formik = useFormik({
+    initialValues: initialValues(),
+    validationSchema: validationSchema(),
+    validateOnChange: false,
+    onSubmit: (formValue) => {
+      try {
+        console.log(formValue);
+      } catch (error) {
+        toaster.error({
+          title: "Error",
+          description: error.response.data
+            ? error.response.data.message
+            : "Hubo un error",
+        });
+      }
+    },
   });
 
   const [logoPreview, setLogoPreview] = useState(null);
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: "AIzaSyAGTn0yfAKNbbOu5E4SehP9VXC_FvytAEA", // Reemplaza con tu API key
-    libraries: ["places"],
-  });
-
-  const autocompleteRef = useRef(null);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
-      setFormData({ ...formData, logo: file });
       setLogoPreview(URL.createObjectURL(file));
     }
   };
 
-  const handleMapClick = useCallback(
-    (event) => {
-      const location = {
-        lat: event.latLng.lat(),
-        lng: event.latLng.lng(),
-      };
-      setFormData({ ...formData, coordinates: location });
-    },
-    [formData]
-  );
-
-  const handlePlaceChanged = () => {
-    if (autocompleteRef.current) {
-      const place = autocompleteRef.current.getPlace();
-      if (place.geometry) {
-        const location = {
-          lat: place.geometry.location.lat(),
-          lng: place.geometry.location.lng(),
-        };
-        setFormData({
-          ...formData,
-          location: place.formatted_address,
-          coordinates: location,
-        });
-      }
-    }
-  };
-
-  const handleSubmit = () => {
-    onAddRestaurant(formData);
-    setFormData({
-      name: "",
-      address: "",
-      location: "",
-      status: "",
-      logo: null,
-      coordinates: null,
-    });
+  const handleRemoveLogo = () => {
     setLogoPreview(null);
   };
-
-  if (!isLoaded) return <Spinner />;
 
   return (
     <Box>
       <VStack spacing={4} align="stretch">
         <HStack>
-          <Input
-            placeholder="Nombre"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            size="sm"
-          />
-          <Input
-            placeholder="Dirección"
-            name="address"
-            value={formData.address}
-            onChange={handleInputChange}
-            size="sm"
-          />
-        </HStack>
-        <HStack>
-          <Autocomplete
-            onLoad={(ref) => (autocompleteRef.current = ref)}
-            onPlaceChanged={handlePlaceChanged}
+          <Field.Root
+            invalid={formik.touched.name && Boolean(formik.errors.name)}
           >
             <Input
-              placeholder="Ubicación (Google Maps)"
-              name="location"
-              value={formData.location}
-              onChange={handleInputChange}
+              placeholder="Nombre"
+              name="name"
               size="sm"
+              onChange={(e) => formik.setFieldValue("name", e.target.value)}
+              onBlur={formik.handleBlur}
             />
-          </Autocomplete>
-          <Input
-            placeholder="Estado"
-            name="status"
-            value={formData.status}
-            onChange={handleInputChange}
-            size="sm"
-          />
+            {formik.touched.name && formik.errors.name && (
+              <Field.ErrorText color="red.500" fontSize="sm" mt={1}>
+                {formik.errors.name}
+              </Field.ErrorText>
+            )}
+          </Field.Root>
+          <Field.Root
+            invalid={formik.touched.address && Boolean(formik.errors.address)}
+          >
+            <Input
+              placeholder="Dirección"
+              name="address"
+              size="sm"
+              onChange={(e) => formik.setFieldValue("address", e.target.value)}
+              onBlur={formik.handleBlur}
+            />
+            {formik.touched.address && formik.errors.address && (
+              <Field.ErrorText color="red.500" fontSize="sm" mt={1}>
+                {formik.errors.address}
+              </Field.ErrorText>
+            )}
+          </Field.Root>
+        </HStack>
+        <HStack>
+          <Field.Root
+            invalid={formik.touched.phone && Boolean(formik.errors.phone)}
+          >
+            <Input
+              placeholder="Teléfono"
+              name="phone"
+              size="sm"
+              onChange={(e) => formik.setFieldValue("phone", e.target.value)}
+              onBlur={formik.handleBlur}
+            />
+            {formik.touched.phone && formik.errors.phone && (
+              <Field.ErrorText color="red.500" fontSize="sm" mt={1}>
+                {formik.errors.phone}
+              </Field.ErrorText>
+            )}
+          </Field.Root>
+          <Field.Root
+            invalid={formik.touched.state && Boolean(formik.errors.state)}
+          >
+            <Input
+              placeholder="Estado"
+              name="state"
+              size="sm"
+              onChange={(e) => formik.setFieldValue("state", e.target.value)}
+              onBlur={formik.handleBlur}
+            />
+            {formik.touched.state && formik.errors.state && (
+              <Field.ErrorText color="red.500" fontSize="sm" mt={1}>
+                {formik.errors.state}
+              </Field.ErrorText>
+            )}
+          </Field.Root>
         </HStack>
 
         {/* Carga y vista previa de logo */}
@@ -146,7 +129,7 @@ export function CreateRestaurantComponent({ onAddRestaurant }) {
           <Text fontSize="sm" mb={2} fontWeight="medium">
             Logo del restaurante
           </Text>
-          <HStack align="start">
+          <HStack align="start" spacing={4}>
             <label>
               <Input
                 type="file"
@@ -158,41 +141,41 @@ export function CreateRestaurantComponent({ onAddRestaurant }) {
                 Seleccionar imagen
               </Button>
             </label>
-            {logoPreview && (
+          </HStack>
+          {logoPreview && (
+            <Center mt={4} position="relative">
               <Image
                 src={logoPreview}
                 alt="Logo preview"
-                boxSize="60px"
-                borderRadius="md"
+                boxSize="150px"
+                borderRadius="full"
                 objectFit="cover"
-                shadow="sm"
+                shadow="lg"
               />
-            )}
-          </HStack>
-        </Box>
-
-        {/* Mapa de Google */}
-        <Box>
-          <Text fontSize="sm" fontWeight="medium" mb={2}>
-            Selecciona la ubicación en el mapa
-          </Text>
-          <GoogleMap
-            mapContainerStyle={containerStyle}
-            center={formData.coordinates || centerDefault}
-            zoom={14}
-            onClick={handleMapClick}
-          >
-            {formData.coordinates && <Marker position={formData.coordinates} />}
-          </GoogleMap>
+              <IconButton
+                size="sm"
+                position="absolute"
+                top="5px"
+                right="5px"
+                colorScheme="red"
+                onClick={handleRemoveLogo}
+                aria-label="Eliminar logo"
+              >
+                <MdClose />
+              </IconButton>
+            </Center>
+          )}
         </Box>
 
         <Button
+          onClick={formik.handleSubmit}
+          loading={formik.isSubmitting}
+          width="full"
           bg="teal.500"
           _hover={{ bg: "teal.600" }}
           _active={{ bg: "teal.700" }}
           color="white"
-          size="sm"
-          onClick={handleSubmit}
+          size="xs"
         >
           Guardar
         </Button>

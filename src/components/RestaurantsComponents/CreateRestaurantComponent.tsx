@@ -45,6 +45,7 @@ export function CreateRestaurantComponent({ onAddRestaurant }) {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
       setLogoPreview(URL.createObjectURL(file));
+      formik.setFieldValue("image", file);
     }
   };
 

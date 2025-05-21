@@ -46,6 +46,8 @@ export function CreateRestaurantComponent({ onAddRestaurant }) {
     if (file && file.type.startsWith("image/")) {
       setLogoPreview(URL.createObjectURL(file));
       formik.setFieldValue("image", file);
+      formik.setFieldValue("image", file);
+      formik.setFieldTouched("image", true);
     }
   };
 
@@ -132,12 +134,22 @@ export function CreateRestaurantComponent({ onAddRestaurant }) {
           </Text>
           <HStack align="start" spacing={4}>
             <label>
-              <Input
-                type="file"
-                accept="image/*"
-                display="none"
-                onChange={handleFileChange}
-              />
+              <Field.Root
+                invalid={formik.touched.image && Boolean(formik.errors.image)}
+              >
+                <Input
+                  type="file"
+                  accept="image/*"
+                  display="none"
+                  name="image"
+                  onChange={handleFileChange}
+                />
+                {formik.touched.image && formik.errors.image && (
+                  <Field.ErrorText color="red.500" fontSize="sm" mt={1}>
+                    {formik.errors.image}
+                  </Field.ErrorText>
+                )}
+              </Field.Root>
               <Button as="span" size="sm" colorScheme="gray" variant="outline">
                 Seleccionar imagen
               </Button>
@@ -153,6 +165,7 @@ export function CreateRestaurantComponent({ onAddRestaurant }) {
                 objectFit="cover"
                 shadow="lg"
               />
+
               <IconButton
                 size="sm"
                 position="absolute"

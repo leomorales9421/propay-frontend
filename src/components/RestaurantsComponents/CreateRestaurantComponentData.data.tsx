@@ -16,5 +16,13 @@ export function validationSchema() {
     address: Yup.string().required("Campo requerido"),
     phone: Yup.string().required("Campo requerido"),
     state: Yup.string().required("Campo requerido"),
+    image: Yup.mixed()
+      .required("Campo requerido")
+      .test(
+        "fileType",
+        "Solo se permiten imágenes (jpg, png, jpeg)",
+        (value) =>
+          value && ["image/jpeg", "image/png", "image/jpg"].includes(value.type)
+      ),
   });
 }
